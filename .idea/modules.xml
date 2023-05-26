@@ -3,6 +3,8 @@
   <component name="ProjectModuleManager">
     <modules>
       <module fileurl="file://$PROJECT_DIR$/.idea/modules/demo-api-gateway.main.iml" filepath="$PROJECT_DIR$/.idea/modules/demo-api-gateway.main.iml" />
+      <module fileurl="file://$PROJECT_DIR$/.idea/modules/demo-paymentapp.main.iml" filepath="$PROJECT_DIR$/.idea/modules/demo-paymentapp.main.iml" />
+      <module fileurl="file://$PROJECT_DIR$/.idea/modules/demo-productapp.main.iml" filepath="$PROJECT_DIR$/.idea/modules/demo-productapp.main.iml" />
       <module fileurl="file://$PROJECT_DIR$/.idea/microservices.iml" filepath="$PROJECT_DIR$/.idea/microservices.iml" />
     </modules>
   </component>
