@@ -1,6 +1,8 @@
 package com.example.productapp.demoproductapp.service.impl;
 
+import com.example.productapp.demoproductapp.config.FeignOrderConfig;
 import com.example.productapp.demoproductapp.entity.Product;
+import com.example.productapp.demoproductapp.model.OrderModel;
 import com.example.productapp.demoproductapp.model.ProductModel;
 import com.example.productapp.demoproductapp.repository.ProductRepository;
 import com.example.productapp.demoproductapp.service.ProductService;
@@ -14,6 +16,7 @@ import java.util.List;
 @RequiredArgsConstructor
 public class ProductServiceImpl implements ProductService {
     private final ProductRepository productRepository;
+    private final FeignOrderConfig feignOrderConfig;
     @Override
     public List<ProductModel> getAllProducts() {
         List<Product> products = productRepository.findAll();
@@ -27,5 +30,61 @@ public class ProductServiceImpl implements ProductService {
             requiredProducts.add(requiredProduct);
         }
         return requiredProducts;
+    }
+
+    @Override
+    public String addProduct(ProductModel productModel) {
+        Product product = Product.builder()
+                        .productName(productModel.getProductName())
+                        .productPrice(productModel.getProductPrice())
+                        .productQuantity(productModel.getProductQuantity())
+                        .productDetails(productModel.getProductDetails())
+                        .build();
+        productRepository.save(product);
+        return "";
+    }
+
+    @Override
+    public OrderModel createOrder(OrderModel orderModel){
+        return feignOrderConfig.createOrder(orderModel);
+        //return "Your total payable amount is "+finalAmount;
+    }
+
+    @Override
+    public String getProductStock(String productName) {
+        Product product = productRepository.findByProductName(productName);
+        String quantity = product.getProductQuantity();
+        return quantity;
+    }
+    @Override
+    public String getProductPrice(String productName) {
+        Product product = productRepository.findByProductName(productName);
+        String price = product.getProductPrice();
+        return price;
+    }
+//    List<CartItems> cartItems = orderModel.getCartItems();
+//    Integer total = 0;
+//        for(CartItems cartItem:cartItems){
+//        Product product = productRepository.findByProductName(cartItem.getProductName());
+//        String amount = product.getProductPrice();
+//        Integer intAmount = Integer.parseInt(amount);
+//        String quantity = cartItem.getProductQuantity();
+//        Integer quanInt = Integer.parseInt(quantity);
+//        Integer productTotalAmount = intAmount * quanInt;
+//        total += productTotalAmount;
+//
+//        String finalAmount = String.valueOf(total);
+//    }
+
+    @Override
+    public void updateStock(String productName, String stock){
+        Product product = productRepository.findByProductName(productName);
+        Integer intStock = Integer.parseInt(stock);
+        Integer repoStock = Integer.parseInt(product.getProductQuantity());
+
+        Integer newStock = repoStock - intStock;
+        String finalStock = String.valueOf(newStock);
+        product.setProductQuantity(finalStock);
+        productRepository.save(product);
     }
 }

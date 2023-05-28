@@ -4,9 +4,8 @@
   <component name="GradleSettings">
     <option name="linkedExternalProjectsSettings">
       <GradleProjectSettings>
-        <option name="distributionType" value="DEFAULT_WRAPPED" />
         <option name="externalProjectPath" value="$PROJECT_DIR$/demo-api-gateway" />
-        <option name="gradleHome" value="C:/Gradle/gradle-8.1.1" />
+        <option name="gradleHome" value="$PROJECT_DIR$/../../../../../../../../Gradle/gradle-8.1.1" />
         <option name="gradleJvm" value="19" />
         <option name="modules">
           <set>
@@ -15,9 +14,8 @@
         </option>
       </GradleProjectSettings>
       <GradleProjectSettings>
-        <option name="distributionType" value="DEFAULT_WRAPPED" />
         <option name="externalProjectPath" value="$PROJECT_DIR$/demo-configserver" />
-        <option name="gradleHome" value="C:/Gradle/gradle-8.1.1" />
+        <option name="gradleHome" value="$PROJECT_DIR$/../../../../../../../../Gradle/gradle-8.1.1" />
         <option name="gradleJvm" value="19" />
         <option name="modules">
           <set>
@@ -26,9 +24,8 @@
         </option>
       </GradleProjectSettings>
       <GradleProjectSettings>
-        <option name="distributionType" value="DEFAULT_WRAPPED" />
         <option name="externalProjectPath" value="$PROJECT_DIR$/demo-microservice" />
-        <option name="gradleHome" value="C:/Gradle/gradle-8.1.1" />
+        <option name="gradleHome" value="$PROJECT_DIR$/../../../../../../../../Gradle/gradle-8.1.1" />
         <option name="gradleJvm" value="19" />
         <option name="modules">
           <set>
@@ -37,24 +34,30 @@
         </option>
       </GradleProjectSettings>
       <GradleProjectSettings>
-        <option name="distributionType" value="DEFAULT_WRAPPED" />
-        <option name="externalProjectPath" value="$PROJECT_DIR$/demo-payment/demo-paymentapp" />
-        <option name="gradleHome" value="C:/Gradle/gradle-8.1.1" />
+        <option name="externalProjectPath" value="$PROJECT_DIR$/demo-orders/demo-orders" />
         <option name="gradleJvm" value="19" />
         <option name="modules">
           <set>
-            <option value="$PROJECT_DIR$/demo-payment/demo-paymentapp" />
+            <option value="$PROJECT_DIR$/demo-orders/demo-orders" />
           </set>
         </option>
       </GradleProjectSettings>
       <GradleProjectSettings>
-        <option name="distributionType" value="DEFAULT_WRAPPED" />
         <option name="externalProjectPath" value="$PROJECT_DIR$/demo-productapp/demo-productapp" />
-        <option name="gradleHome" value="C:/Gradle/gradle-8.1.1" />
+        <option name="gradleHome" value="$PROJECT_DIR$/../../../../../../../../Gradle/gradle-8.1.1" />
         <option name="gradleJvm" value="19" />
         <option name="modules">
           <set>
             <option value="$PROJECT_DIR$/demo-productapp/demo-productapp" />
+          </set>
+        </option>
+      </GradleProjectSettings>
+      <GradleProjectSettings>
+        <option name="externalProjectPath" value="$PROJECT_DIR$/demopaymentapp/demopaymentapp" />
+        <option name="gradleJvm" value="19" />
+        <option name="modules">
+          <set>
+            <option value="$PROJECT_DIR$/demopaymentapp/demopaymentapp" />
           </set>
         </option>
       </GradleProjectSettings>
