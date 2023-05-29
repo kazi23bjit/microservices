@@ -11,6 +11,8 @@ import org.springframework.kafka.annotation.KafkaListener;
 import org.springframework.messaging.handler.annotation.Payload;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.List;
+
 @RestController
 @RequiredArgsConstructor
 public class PaymentController {
@@ -29,7 +31,7 @@ public class PaymentController {
 
 
     @GetMapping("/get-invoice/{id}")
-    public InvoiceModel getInvoice(@PathVariable Long id){
+    public List<InvoiceModel> getInvoice(@PathVariable Long id){
         return paymentService.getInvoice(id);
     }
 

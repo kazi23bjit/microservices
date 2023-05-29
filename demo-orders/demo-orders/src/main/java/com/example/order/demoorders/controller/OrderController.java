@@ -4,9 +4,7 @@ import com.example.order.demoorders.model.OrderModel;
 import com.example.order.demoorders.model.OrderResponse;
 import com.example.order.demoorders.service.OrderService;
 import lombok.RequiredArgsConstructor;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 @RestController
 @RequiredArgsConstructor
@@ -17,4 +15,9 @@ public class OrderController {
         return orderService.createOrder(orderModel);
         //return "Order added";
     }
+    @PutMapping("/get-order-by-id/{orderId}/{orderStatus}")
+    public void updateOrderById(@PathVariable Long orderId, @PathVariable String orderStatus){
+        orderService.updateOrderById(orderId, orderStatus);
+    }
+
 }

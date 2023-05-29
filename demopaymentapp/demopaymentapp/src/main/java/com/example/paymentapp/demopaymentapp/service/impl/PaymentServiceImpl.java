@@ -1,5 +1,6 @@
 package com.example.paymentapp.demopaymentapp.service.impl;
 
+import com.example.paymentapp.demopaymentapp.config.FeignOrderConfig;
 import com.example.paymentapp.demopaymentapp.config.FeignProductConfig;
 import com.example.paymentapp.demopaymentapp.config.FeignUserConfig;
 import com.example.paymentapp.demopaymentapp.entity.CartEntity;
@@ -20,6 +21,7 @@ import java.util.Optional;
 @RequiredArgsConstructor
 public class PaymentServiceImpl implements PaymentService {
     private final FeignProductConfig feignProductConfig;
+    private final FeignOrderConfig feignOrderConfig;
     private final InvoiceRepository invoiceRepository;
     private final FeignUserConfig userConfig;
     //private InvoiceModel invoiceModel;
@@ -28,6 +30,8 @@ public class PaymentServiceImpl implements PaymentService {
         List<CartItems> cartItems = orderResponse.getCartItems();
         List<CartItems> responseCartItems = new ArrayList<>();
         List<CartEntity> finalCartEntity = new ArrayList<>();
+        Long orderId = orderResponse.getId();
+        String orderStatus = "COMPLETED";
 
         Integer totalPrice = 0;
         for(CartItems cartItem:cartItems){
@@ -61,6 +65,7 @@ public class PaymentServiceImpl implements PaymentService {
                     .userId(orderResponse.getUserId()).build();
             invoiceRepository.save(invoice);
         }
+        feignOrderConfig.updateOrderById(orderId, orderStatus);
 
 
 //        InvoiceModel invoiceModel = InvoiceModel.builder()
@@ -74,36 +79,41 @@ public class PaymentServiceImpl implements PaymentService {
 
 
     @Override
-    public InvoiceModel getInvoice(Long userId){
-        Invoice invoice = invoiceRepository.findByUserId(userId);
-        if(!invoice.getCartItems().isEmpty()){
-            //Invoice requiredInvoice = invoice.get();
-            List<CartEntity> cartItem = invoice.getCartItems();
-            List<CartItems> finalCartItems = new ArrayList<>();
-            for(CartEntity item:cartItem){
-                CartItems cartProduct = CartItems.builder()
-                        .productName(item.getProductName())
-                        .productQuantity(item.getProductQuantity()).build();
-                finalCartItems.add(cartProduct);
+    public List<InvoiceModel> getInvoice(Long userId){
+        List<Invoice> invoice = invoiceRepository.findByUserId(userId);
+        List<InvoiceModel> invoiceModels = new ArrayList<>();
+        for(Invoice inv:invoice){
+            if(!inv.getCartItems().isEmpty()){
+                //Invoice requiredInvoice = invoice.get();
+                List<CartEntity> cartItem = inv.getCartItems();
+                List<CartItems> finalCartItems = new ArrayList<>();
+                for(CartEntity item:cartItem){
+                    CartItems cartProduct = CartItems.builder()
+                            .productName(item.getProductName())
+                            .productQuantity(item.getProductQuantity()).build();
+                    finalCartItems.add(cartProduct);
+                }
+                InvoiceModel invoiceModel = InvoiceModel.builder()
+                        .paymentStatus(inv.getPaymentStatus())
+                        .address(inv.getAddress())
+                        .totalPrice(inv.getTotalPrice())
+                        .cartItems(finalCartItems)
+                        .userId(inv.getUserId()).build();
+                invoiceModels.add(invoiceModel);
             }
-            InvoiceModel invoiceModel = InvoiceModel.builder()
-                    .paymentStatus(invoice.getPaymentStatus())
-                    .address(invoice.getAddress())
-                    .totalPrice(invoice.getTotalPrice())
-                    .cartItems(finalCartItems)
-                    .userId(invoice.getUserId()).build();
-            return invoiceModel;
         }
-        List<CartItems> emptyCart = new ArrayList<>();
-        CartItems cartItems = CartItems.builder()
-                .productQuantity(0)
-                .productName("No name").build();
-        InvoiceModel invoiceModel = InvoiceModel.builder()
-                .paymentStatus("CANCELLED")
-                .totalPrice(0)
-                .cartItems(emptyCart)
-                .build();
-        return invoiceModel;
+        return invoiceModels;
+
+//        List<CartItems> emptyCart = new ArrayList<>();
+//        CartItems cartItems = CartItems.builder()
+//                .productQuantity(0)
+//                .productName("No name").build();
+//        InvoiceModel invoiceModel = InvoiceModel.builder()
+//                .paymentStatus("CANCELLED")
+//                .totalPrice(0)
+//                .cartItems(emptyCart)
+//                .build();
+//        return invoiceModel;
     }
 
     @Override

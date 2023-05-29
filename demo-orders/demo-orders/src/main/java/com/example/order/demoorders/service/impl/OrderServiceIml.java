@@ -12,6 +12,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
+import java.util.Optional;
 
 @Service
 @RequiredArgsConstructor
@@ -41,6 +42,7 @@ public class OrderServiceIml implements OrderService {
                 .build();
         orderRepository.save(order);
         OrderResponse orderResponse = OrderResponse.builder()
+                .id(order.getId())
                 .orderStatus(order.getOrderStatus())
                 .address(order.getAddress())
                 .cartItems(cartItems)
@@ -65,6 +67,16 @@ public class OrderServiceIml implements OrderService {
 //            return "Cannt be ordered";
 //        }
         //return "Order added";
+    }
+
+    @Override
+    public void updateOrderById(Long orderId, String orderStatus){
+        Optional<Order> order = orderRepository.findById(orderId);
+        if(order.isPresent()){
+            Order requiredOrder = order.get();
+            requiredOrder.setOrderStatus(orderStatus);
+            orderRepository.save(requiredOrder);
+        }
     }
 
 }
