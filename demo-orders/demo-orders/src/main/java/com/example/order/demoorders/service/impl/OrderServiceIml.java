@@ -43,7 +43,8 @@ public class OrderServiceIml implements OrderService {
         OrderResponse orderResponse = OrderResponse.builder()
                 .orderStatus(order.getOrderStatus())
                 .address(order.getAddress())
-                .cartItems(cartItems).build();
+                .cartItems(cartItems)
+                .userId(orderModel.getUserId()).build();
         orderProducer.sendMessage(orderResponse);
         return orderResponse;
 //        orderRepository.save(order);

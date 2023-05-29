@@ -8,7 +8,7 @@ import org.springframework.web.bind.annotation.PathVariable;
 @FeignClient(name ="product-app")
 public interface FeignProductConfig {
     @GetMapping("/get-product-stock/{productName}")
-    String getProductStock(@PathVariable String productName);
+    Integer getProductStock(@PathVariable String productName);
 
 
 }

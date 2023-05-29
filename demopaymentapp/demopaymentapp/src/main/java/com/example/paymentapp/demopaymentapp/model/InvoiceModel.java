@@ -12,8 +12,9 @@ import java.util.List;
 @AllArgsConstructor
 @Builder
 public class InvoiceModel {
-    private String orderStatus;
+    private String paymentStatus;
     private String address;
     private List<CartItems> cartItems;
-    private String totalPrice;
+    private Integer totalPrice;
+    private Long userId;
 }

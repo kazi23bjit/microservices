@@ -2,16 +2,14 @@ package com.example.paymentapp.demopaymentapp.controller;
 
 import com.example.paymentapp.demopaymentapp.model.InvoiceModel;
 import com.example.paymentapp.demopaymentapp.model.OrderResponse;
+import com.example.paymentapp.demopaymentapp.model.PaymentModel;
 import com.example.paymentapp.demopaymentapp.service.PaymentService;
 import lombok.RequiredArgsConstructor;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.http.HttpStatus;
-import org.springframework.http.ResponseEntity;
 import org.springframework.kafka.annotation.KafkaListener;
 import org.springframework.messaging.handler.annotation.Payload;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 @RestController
 @RequiredArgsConstructor
@@ -23,16 +21,21 @@ public class PaymentController {
 
     @KafkaListener(topics = "${spring.kafka.topic.name}"
             , groupId = "${spring.kafka.consumer.group-id}")
-    public void consumeMessage(@Payload OrderResponse orderResponse) {
+    public void consumeMessage(@Payload OrderResponse orderResponse) throws Exception {
         logger.info("Order response: " + orderResponse);
 
         paymentService.validateOrder(orderResponse);
     }
 
 
-    @GetMapping("/get-invoice")
-    public InvoiceModel getInvoice(){
-        return paymentService.getInvoice();
+    @GetMapping("/get-invoice/{id}")
+    public InvoiceModel getInvoice(@PathVariable Long id){
+        return paymentService.getInvoice(id);
+    }
+
+    @PostMapping("/payment")
+    public String finalPayment(@RequestBody PaymentModel paymentModel){
+        return paymentService.finalResult(paymentModel);
     }
 
 }

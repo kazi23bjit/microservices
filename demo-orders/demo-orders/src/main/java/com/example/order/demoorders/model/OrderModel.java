@@ -13,4 +13,5 @@ public class OrderModel {
     private String address;
     private String orderStatus;
     private List<CartItems> cartItems;
+    private Long userId;
 }

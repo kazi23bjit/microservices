@@ -18,7 +18,7 @@ public class Product {
     private Long id;
 
     private String productName;
-    private String productPrice;
-    private String productQuantity;
+    private Integer productPrice;
+    private Integer productQuantity;
     private String productDetails;
 }

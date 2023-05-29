@@ -35,17 +35,17 @@ public class ProductController {
     }
 
     @GetMapping("/get-product-stock/{productName}")
-    public String getProductStock(@PathVariable String productName){
+    public Integer getProductStock(@PathVariable String productName){
         return productService.getProductStock(productName);
     }
 
     @GetMapping("/get-product-price/{productName}")
-    public String getProductPrice(@PathVariable String productName){
-        return productService.getProductStock(productName);
+    public Integer getProductPrice(@PathVariable String productName){
+        return productService.getProductPrice(productName);
     }
 
     @PutMapping("/update-stock/{productName}/{stock}")
-    public void updateProductStock(@PathVariable String productName, @PathVariable String stock){
+    public void updateProductStock(@PathVariable String productName, @PathVariable Integer stock){
         productService.updateStock(productName, stock);
     }
 }

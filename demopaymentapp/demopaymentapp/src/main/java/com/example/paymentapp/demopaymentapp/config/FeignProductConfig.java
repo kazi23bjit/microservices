@@ -8,10 +8,10 @@ import org.springframework.web.bind.annotation.PutMapping;
 @FeignClient(name = "product-app")
 public interface FeignProductConfig {
     @GetMapping("/get-product-stock/{productName}")
-    String getProductStock(@PathVariable String productName);
+    Integer getProductStock(@PathVariable String productName);
     @GetMapping("/get-product-price/{productName}")
-    String getProductPrice(@PathVariable String productName);
+    Integer getProductPrice(@PathVariable String productName);
     @PutMapping("/update-stock/{productName}/{stock}")
-    void updateProductStock(@PathVariable String productName, @PathVariable String stock);
+    void updateProductStock(@PathVariable String productName, @PathVariable Integer stock);
 
 }

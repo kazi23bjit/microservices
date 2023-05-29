@@ -1,9 +1,11 @@
 package com.example.paymentapp.demopaymentapp.service.impl;
 
 import com.example.paymentapp.demopaymentapp.config.FeignProductConfig;
-import com.example.paymentapp.demopaymentapp.model.CartItems;
-import com.example.paymentapp.demopaymentapp.model.InvoiceModel;
-import com.example.paymentapp.demopaymentapp.model.OrderResponse;
+import com.example.paymentapp.demopaymentapp.config.FeignUserConfig;
+import com.example.paymentapp.demopaymentapp.entity.CartEntity;
+import com.example.paymentapp.demopaymentapp.entity.Invoice;
+import com.example.paymentapp.demopaymentapp.model.*;
+import com.example.paymentapp.demopaymentapp.repository.InvoiceRepository;
 import com.example.paymentapp.demopaymentapp.service.PaymentService;
 import lombok.RequiredArgsConstructor;
 import org.slf4j.Logger;
@@ -12,44 +14,54 @@ import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
 
 @Service
 @RequiredArgsConstructor
 public class PaymentServiceImpl implements PaymentService {
     private final FeignProductConfig feignProductConfig;
+    private final InvoiceRepository invoiceRepository;
+    private final FeignUserConfig userConfig;
     //private InvoiceModel invoiceModel;
-    private List<CartItems>globalCartItems = new ArrayList<>();
-    private String globalAddress;
-    private String globalOrderStatus;
-    private String globalFinalPrice;
     @Override
     public void validateOrder(OrderResponse orderResponse) {
         List<CartItems> cartItems = orderResponse.getCartItems();
         List<CartItems> responseCartItems = new ArrayList<>();
+        List<CartEntity> finalCartEntity = new ArrayList<>();
 
         Integer totalPrice = 0;
         for(CartItems cartItem:cartItems){
-            Integer pQuantity = Integer.parseInt(feignProductConfig.getProductStock(cartItem.getProductName()));
-            Integer productPrice = Integer.parseInt(feignProductConfig.getProductPrice(cartItem.getProductName()));
-
+            Integer pQuantity = feignProductConfig.getProductStock(cartItem.getProductName());
+            Integer productPrice = feignProductConfig.getProductPrice(cartItem.getProductName());
+            System.out.println(productPrice);
             Integer productPricePerQuantity = pQuantity*productPrice;
-            Integer oQuantity = Integer.parseInt(cartItem.getProductQuantity());
+            Integer oQuantity = cartItem.getProductQuantity();
             if(oQuantity<pQuantity){
                 responseCartItems.add(cartItem);
+                CartEntity cartEntity = CartEntity.builder()
+                        .productName(cartItem.getProductName())
+                        .productQuantity(cartItem.getProductQuantity()).build();
+                finalCartEntity.add(cartEntity);
                 totalPrice += productPricePerQuantity;
-                globalCartItems.add(cartItem);
-                feignProductConfig.updateProductStock(cartItem.getProductName(), cartItem.getProductQuantity());
+                feignProductConfig.updateProductStock(cartItem.getProductName(), oQuantity);
             }
             else{
-                cartItem.setProductQuantity("Not in stock");
+                cartItem.setProductQuantity(oQuantity);
                 responseCartItems.add(cartItem);
             }
         }
-        globalAddress = orderResponse.getAddress();
-        globalOrderStatus = "SUCCESSFUL";
 
-        String finalPrice = String.valueOf(totalPrice);
-        globalFinalPrice = finalPrice;
+        //String finalPrice = String.valueOf(totalPrice);
+        if(totalPrice>0){
+            Invoice invoice = Invoice.builder()
+                    .address(orderResponse.getAddress())
+                    .paymentStatus("PENDING")
+                    .cartItems(finalCartEntity)
+                    .totalPrice(totalPrice)
+                    .userId(orderResponse.getUserId()).build();
+            invoiceRepository.save(invoice);
+        }
+
 
 //        InvoiceModel invoiceModel = InvoiceModel.builder()
 //                .orderStatus("Successful")
@@ -62,14 +74,57 @@ public class PaymentServiceImpl implements PaymentService {
 
 
     @Override
-    public InvoiceModel getInvoice(){
-        Logger logger = LoggerFactory.getLogger(PaymentServiceImpl.class);
+    public InvoiceModel getInvoice(Long userId){
+        Invoice invoice = invoiceRepository.findByUserId(userId);
+        if(!invoice.getCartItems().isEmpty()){
+            //Invoice requiredInvoice = invoice.get();
+            List<CartEntity> cartItem = invoice.getCartItems();
+            List<CartItems> finalCartItems = new ArrayList<>();
+            for(CartEntity item:cartItem){
+                CartItems cartProduct = CartItems.builder()
+                        .productName(item.getProductName())
+                        .productQuantity(item.getProductQuantity()).build();
+                finalCartItems.add(cartProduct);
+            }
+            InvoiceModel invoiceModel = InvoiceModel.builder()
+                    .paymentStatus(invoice.getPaymentStatus())
+                    .address(invoice.getAddress())
+                    .totalPrice(invoice.getTotalPrice())
+                    .cartItems(finalCartItems)
+                    .userId(invoice.getUserId()).build();
+            return invoiceModel;
+        }
+        List<CartItems> emptyCart = new ArrayList<>();
+        CartItems cartItems = CartItems.builder()
+                .productQuantity(0)
+                .productName("No name").build();
         InvoiceModel invoiceModel = InvoiceModel.builder()
-                .address(globalAddress)
-                .orderStatus(globalOrderStatus)
-                .totalPrice(globalFinalPrice)
-                .cartItems(globalCartItems).build();
-        logger.info("invoice model:"+invoiceModel);
+                .paymentStatus("CANCELLED")
+                .totalPrice(0)
+                .cartItems(emptyCart)
+                .build();
         return invoiceModel;
+    }
+
+    @Override
+    public String finalResult(PaymentModel paymentModel) {
+        Long user_id = paymentModel.getUser_id();
+        UserResponse response = userConfig.getUserById(user_id);
+        Optional<Invoice> invoice = invoiceRepository.findById(paymentModel.getInvoice_id());
+
+        if(invoice.isPresent()){
+            Invoice newInvoice = invoice.get();
+            Integer balance = response.getAccountBalance();
+            Integer requiredAmount = paymentModel.getTotalPrice();
+            if(balance<requiredAmount){
+                return "Sorry cannot process the payment";
+            }
+            userConfig.updateUserBalance(requiredAmount, user_id);
+            newInvoice.setPaymentStatus("COMPLETED");
+            invoiceRepository.save(newInvoice);
+        }
+
+        return "PAYMENT PROCESSED";
+
     }
 }

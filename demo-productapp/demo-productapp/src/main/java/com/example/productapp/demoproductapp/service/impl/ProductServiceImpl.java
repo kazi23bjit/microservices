@@ -51,15 +51,15 @@ public class ProductServiceImpl implements ProductService {
     }
 
     @Override
-    public String getProductStock(String productName) {
+    public Integer getProductStock(String productName) {
         Product product = productRepository.findByProductName(productName);
-        String quantity = product.getProductQuantity();
+        Integer quantity = product.getProductQuantity();
         return quantity;
     }
     @Override
-    public String getProductPrice(String productName) {
+    public Integer getProductPrice(String productName) {
         Product product = productRepository.findByProductName(productName);
-        String price = product.getProductPrice();
+        Integer price = product.getProductPrice();
         return price;
     }
 //    List<CartItems> cartItems = orderModel.getCartItems();
@@ -77,14 +77,12 @@ public class ProductServiceImpl implements ProductService {
 //    }
 
     @Override
-    public void updateStock(String productName, String stock){
+    public void updateStock(String productName, Integer stock){
         Product product = productRepository.findByProductName(productName);
-        Integer intStock = Integer.parseInt(stock);
-        Integer repoStock = Integer.parseInt(product.getProductQuantity());
+        Integer repoStock = product.getProductQuantity();
 
-        Integer newStock = repoStock - intStock;
-        String finalStock = String.valueOf(newStock);
-        product.setProductQuantity(finalStock);
+        Integer newStock = repoStock - stock;
+        product.setProductQuantity(newStock);
         productRepository.save(product);
     }
 }

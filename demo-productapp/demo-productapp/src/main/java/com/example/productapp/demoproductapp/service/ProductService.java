@@ -11,7 +11,7 @@ public interface ProductService {
     List<ProductModel> getAllProducts();
     String addProduct(ProductModel productModel);
     OrderModel createOrder(OrderModel orderModel);
-    String getProductStock(String productName);
-    String getProductPrice(String productName);
-    void updateStock(String productName, String stock);
+    Integer getProductStock(String productName);
+    Integer getProductPrice(String productName);
+    void updateStock(String productName, Integer stock);
 }
