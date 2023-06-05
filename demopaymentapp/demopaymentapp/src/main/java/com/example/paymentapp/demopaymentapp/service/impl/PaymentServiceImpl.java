@@ -9,8 +9,6 @@ import com.example.paymentapp.demopaymentapp.model.*;
 import com.example.paymentapp.demopaymentapp.repository.InvoiceRepository;
 import com.example.paymentapp.demopaymentapp.service.PaymentService;
 import lombok.RequiredArgsConstructor;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
